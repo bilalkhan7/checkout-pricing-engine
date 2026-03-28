@@ -1,4 +1,4 @@
-# Checkout Kata – Angular 20 (Standalone Components + Signals + Playwright)
+# Checkout Pricing Engine – Angular 20 (Standalone Components + Signals + Playwright)
 
 This project is an implementation of the **Supermarket Checkout Kata**, built using **Angular 20**, **standalone components**, **signals**, **RxJS**, **unit tests**, and **Playwright E2E tests**.
 
