@@ -3,7 +3,7 @@
     <div>
       <h2 class="panel__title">
         Products
-        <span class="badge-count">{{ totalProducts() }}</span>
+        <span class="badge-count">{{ totalProducts$ | async }}</span>
       </h2>
       <p class="panel__subtitle">
         Add items to your cart. Offers are applied automatically.
@@ -15,7 +15,7 @@
         <button
           type="button"
           class="filter-switch__btn"
-          [class.is-active]="sortMode() === 'all'"
+          [class.is-active]="(sortMode$ | async) === 'all'"
           (click)="setSortMode('all')"
         >
           All
@@ -24,7 +24,7 @@
         <button
           type="button"
           class="filter-switch__btn"
-          [class.is-active]="sortMode() === 'with-offer'"
+          [class.is-active]="(sortMode$ | async) === 'with-offer'"
           (click)="setSortMode('with-offer')"
         >
           With offers
@@ -33,7 +33,7 @@
         <button
           type="button"
           class="filter-switch__btn"
-          [class.is-active]="sortMode() === 'without-offer'"
+          [class.is-active]="(sortMode$ | async) === 'without-offer'"
           (click)="setSortMode('without-offer')"
         >
           No offers
@@ -43,7 +43,9 @@
   </header>
 
   @if (productService.loading) {
-  <div class="loading">Loading products…</div>
+  <div class="loading">
+    Loading products…
+  </div>
   }
 
   @if (productService.error) {
@@ -53,18 +55,15 @@
   }
 
   <div class="product-grid">
-    @for (p of visibleProducts(); track p.sku) {
+  @for (p of visibleProducts$ | async; track p.sku) {
     <article
       class="product-card"
-      data-testid="product-card"
       [class.product-card--has-offer]="p.offer && !isOfferExpired(p)"
       [class.product-card--offer-active]="p.offer && isOfferActive(p)"
       [class.product-card--offer-expired]="p.offer && isOfferExpired(p)"
     >
       <div class="product-card__header">
-        <div class="product-card__avatar">
-          {{ p.name[0] }}
-        </div>
+        <div class="product-card__avatar">{{ p.name[0] }}</div>
         <div>
           <div class="product-card__name">{{ p.name }}</div>
 
@@ -75,11 +74,13 @@
             [class.product-card__deal-tag--expired]="isOfferExpired(p)"
           >
             @if (isOfferActive(p)) {
-            Offer this week
-            } @else if (isOfferExpired(p)) {
-            Offer recently expired
-            } @else {
-            Upcoming offer
+              Offer this week
+            }
+            @if (!isOfferActive(p) && isOfferExpired(p)) {
+              Offer recently expired
+            }
+            @if (!isOfferActive(p) && !isOfferExpired(p)) {
+              Upcoming offer
             }
           </span>
           }
@@ -87,9 +88,7 @@
       </div>
 
       <div class="product-card__body">
-        <div class="product-card__price">
-          {{ p.unitPrice | eur }}
-        </div>
+        <div class="product-card__price">{{ p.unitPrice | eur }}</div>
 
         @if (p.offer && !isOfferExpired(p)) {
         <div class="product-card__offer">
@@ -97,29 +96,29 @@
           <span class="product-card__offer-value">
             {{ p.offer.quantity }} for {{ p.offer.price | eur }}
           </span>
-        </div>
 
-        @if (p.offer.validFrom || p.offer.validTo) {
-        <div class="product-card__offer-dates">
-          @if (p.offer.validFrom && p.offer.validTo) {
-          <span>
-            Valid
-            {{ p.offer.validFrom | date: 'MMM d' }} –
-            {{ p.offer.validTo | date: 'MMM d' }}
-          </span>
-          } @else if (p.offer.validFrom) {
-          <span>
-            Valid from
-            {{ p.offer.validFrom | date: 'MMM d' }}
-          </span>
-          } @else if (p.offer.validTo) {
-          <span>
-            Valid until
-            {{ p.offer.validTo | date: 'MMM d' }}
-          </span>
+          @if (p.offer.validFrom || p.offer.validTo) {
+          <div class="product-card__offer-dates">
+            @if (p.offer.validFrom && p.offer.validTo) {
+              <span>
+                Valid {{ p.offer.validFrom | date: 'MMM d' }} –
+                {{ p.offer.validTo | date: 'MMM d' }}
+              </span>
+            }
+            @if (p.offer.validFrom && !p.offer.validTo) {
+              <span>
+                Valid from {{ p.offer.validFrom | date: 'MMM d' }}
+              </span>
+            }
+            @if (!p.offer.validFrom && p.offer.validTo) {
+              <span>
+                Valid until {{ p.offer.validTo | date: 'MMM d' }}
+              </span>
+            }
+          </div>
           }
         </div>
-        } }
+        }
       </div>
 
       <div class="product-card__footer">
@@ -146,63 +145,59 @@
         </button>
       </div>
 
-      @if (lastAddedSku() === p.sku) {
+      @if ((lastAddedSku$ | async) === p.sku) {
       <div class="product-card__feedback">
-        Added {{ getQuantity(p.sku) }}
-        item{{ getQuantity(p.sku) === 1 ? '' : 's' }} to cart
+        Added {{ getQuantity(p.sku) }} item{{ getQuantity(p.sku) === 1 ? '' : 's' }} to cart
       </div>
       }
     </article>
     }
   </div>
 
-  @if (totalPages() > 1) {
-  <div class="pagination">
-    <button
-      type="button"
-      class="btn btn--ghost pagination__btn"
-      (click)="changePage(-1)"
-      [disabled]="currentPage() === 1"
-    >
-      ← Previous
-    </button>
+  @if ((((totalPages$ | async) ?? 0) > 1)) {
+    <div class="pagination">
+      <button
+        type="button"
+        class="btn btn--ghost pagination__btn"
+        (click)="changePage(-1)"
+        [disabled]="(currentPage$ | async) === 1"
+      >
+        ← Previous
+      </button>
 
-    <div class="pagination__info">
-      Page {{ currentPage() }} of {{ totalPages() }}
+      <div class="pagination__info">
+        Page {{ currentPage$ | async }} of {{ totalPages$ | async }}
+      </div>
+
+      <button
+        type="button"
+        class="btn btn--ghost pagination__btn"
+        (click)="changePage(1)"
+        [disabled]="(currentPage$ | async) === (totalPages$ | async)"
+      >
+        Next →
+      </button>
     </div>
-
-    <button
-      type="button"
-      class="btn btn--ghost pagination__btn"
-      (click)="changePage(1)"
-      [disabled]="currentPage() === totalPages()"
-    >
-      Next →
-    </button>
-  </div>
   }
 
   <footer class="panel__footer panel__footer--products">
     <div class="panel__footer-info">
       <span class="panel__footer-label">Items in cart</span>
-      <span class="panel__footer-value">
-        {{ cartCount() }}
-      </span>
+      <span class="panel__footer-value">{{ cartCount }}</span>
     </div>
 
     <button
       type="button"
       class="btn btn--ghost panel__footer-cta panel__footer-cta--checkout"
-      [routerLink]="cartCount() > 0 ? '/checkout' : null"
-      [disabled]="cartCount() === 0"
-      [attr.aria-disabled]="cartCount() === 0"
-      (click)="cartCount() === 0 && $event.preventDefault()"
+      [routerLink]="cartCount > 0 ? '/checkout' : null"
+      [disabled]="cartCount === 0"
+      [attr.aria-disabled]="cartCount === 0"
+      (click)="cartCount === 0 && $event.preventDefault()"
     >
       <span>Proceed to checkout</span>
-
-      @if (cartCount() > 0) {
-      <span class="btn-badge">{{ cartCount() }}</span>
-      }
+  @if (cartCount > 0) {
+  <span class="btn-badge">{{ cartCount }}</span>
+  }
     </button>
   </footer>
 </section>

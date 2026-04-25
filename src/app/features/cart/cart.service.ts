@@ -5,6 +5,7 @@ import {
   Offer,
   PricingTable,
 } from '../../shared/models/pricing.model';
+import { isOfferActiveNow } from '../../shared/utils/offer-date.utils';
 
 @Injectable({ providedIn: 'root' })
 export class CartService {
@@ -41,7 +42,7 @@ export class CartService {
   }
 
   private isOfferActive(offer: Offer | undefined): boolean {
-    return !!offer;
+    return isOfferActiveNow(offer);
   }
 
   readonly totalsSignal = computed<CheckoutTotals>(() => {

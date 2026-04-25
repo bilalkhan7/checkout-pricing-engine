@@ -28,8 +28,8 @@ export const DEFAULT_PRICING_TABLE: PricingTable = {
     offer: {
       quantity: 2,
       price: 45,
-      validFrom: '2025-11-10',
-      validTo: '2025-11-16',
+      validFrom: '2026-04-21',
+      validTo: '2026-04-27',
     },
   },
   Banana: {
@@ -39,8 +39,8 @@ export const DEFAULT_PRICING_TABLE: PricingTable = {
     offer: {
       quantity: 3,
       price: 130,
-      validFrom: '2025-11-17',
-      validTo: '2025-11-23',
+      validFrom: '2026-04-22',
+      validTo: '2026-04-28',
     },
   },
   Peach: {
@@ -60,8 +60,8 @@ export const DEFAULT_PRICING_TABLE: PricingTable = {
     offer: {
       quantity: 4,
       price: 30,
-      validFrom: '2025-11-17',
-      validTo: '2025-11-23',
+      validFrom: '2026-04-23',
+      validTo: '2026-04-29',
     },
   },
   Orange: {
@@ -81,8 +81,8 @@ export const DEFAULT_PRICING_TABLE: PricingTable = {
     offer: {
       quantity: 5,
       price: 35,
-      validFrom: '2025-11-24',
-      validTo: '2025-11-30'
+      validFrom: '2026-05-01',
+      validTo: '2026-05-07',
     },
   },
   Watermelon: {
@@ -97,8 +97,8 @@ export const DEFAULT_PRICING_TABLE: PricingTable = {
     offer: {
       quantity: 3,
       price: 80,
-      validFrom: '2025-11-03',
-      validTo: '2025-11-09',
+      validFrom: '2026-05-05',
+      validTo: '2026-05-11',
     },
   },
   Pineapple: {
@@ -113,8 +113,8 @@ export const DEFAULT_PRICING_TABLE: PricingTable = {
     offer: {
       quantity: 4,
       price: 20,
-      validFrom: '2025-11-03',
-      validTo: '2025-11-09'
+      validFrom: '2026-04-14',
+      validTo: '2026-04-21',
     },
   },
 };
